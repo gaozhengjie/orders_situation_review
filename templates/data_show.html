@@ -1,0 +1,116 @@
+<!-- 参考资料 https://lbs.amap.com/demo/jsapi-v2/example/mass-markers/massmarks -->
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <title>订单分布复盘</title>
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <style>
+        html, body, #container {
+            height: 100%;
+            width: 100%;
+        }
+
+        .input-card .btn {
+            margin-right: 1.2rem;
+            width: 9rem;
+        }
+
+        .input-card .btn:last-child {
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <form action="/order_situation_review" method="post">
+        <label for="start_time">开始时间：</label><input id="start_time" name="start_time" type="datetime"
+                                                    value="{{start_time }}"/>
+        <label for="end_time">结束时间：</label><input id="end_time" name="end_time" type="datetime" value="{{end_time}}"/>
+
+            <span>主渠道</span>
+            <input type="checkbox" value="主渠道" name="channel_name_1" checked="checked">
+            <span>微信小程序</span>
+            <input type="checkbox" value="微信小程序" name="channel_name_2" checked="checked">
+            <span>司机端</span>
+            <input type="checkbox" value="司机端" name="channel_name_3" checked="checked">
+            <span>线上叫单</span>
+            <input type="checkbox" value="线上叫单" name="order_way_1" checked="checked">
+            <span>报单</span>
+            <input type="checkbox" value="报单" name="order_way_2" checked="checked">
+            <span>付款完成</span>
+            <input type="checkbox" value="付款完成" name="order_status_1" checked="checked">
+            <span>订单取消</span>
+            <input type="checkbox" value="订单取消" name="order_status_2" checked="checked">
+            <span>确认费用</span>
+            <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
+
+        <input type="submit" value="检索">
+    </form>
+</div>
+<div id="container" class="map" tabindex="0"></div>
+<div class="input-card">
+    <h4>起点终点切换</h4>
+    <div class="input-item">
+        <input type="button" class="btn" value="起点" onclick='setStyle(0)'/>
+        <input type="button" class="btn" value="终点" onclick='setStyle(1)'/>
+    </div>
+</div>
+<script type="text/javascript">
+    window._AMapSecurityConfig = {
+        securityJsCode: '2481220a69ee4cb0df115728d1405aab',
+    }
+</script>
+<script type="text/javascript"
+        src="https://webapi.amap.com/maps?v=2.0&key=10367ae7a183556771cd8ed6d98e5334&plugin=AMap.Adaptor"></script>
+<script
+        src="https://webapi.amap.com/maps?v=2.0&key=10367ae7a183556771cd8ed6d98e5334&plugin=AMap.Scale,AMap.ToolBar"></script>
+<script src="https://webapi.amap.com/loca?v=2.0.0&key=10367ae7a183556771cd8ed6d98e5334"></script>
+<script type="text/javascript">
+    var map = new AMap.Map('container', {
+        zoom: 11,
+        center: [104.065861, 30.657401],  // 102.342785, 35.312316
+        showIndoorMap: false,
+        viewMode: '3D',
+    });
+
+    // JSAPI 2.0 支持显示设置 zIndex, zIndex 越大约靠前，默认按顺序排列
+    var style = [{
+        url: 'https://webapi.amap.com/images/mass/mass0.png',
+        anchor: new AMap.Pixel(6, 6),
+        size: new AMap.Size(11, 11),
+    },
+        {
+            // url: 'https://webapi.amap.com/images/mass/mass1.png',
+            url: 'http://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+            anchor: new AMap.Pixel(4, 4),  // 图标显示位置偏移量，基准点为图标左上角
+            size: new AMap.Size(11, 11),
+        }
+    ];
+
+    var citys = {{ citys | safe }};
+    var mass = new AMap.MassMarks(citys, {
+        opacity: 0.8,
+        zIndex: 111,
+        cursor: 'pointer',
+        style: style
+    });
+
+    var marker = new AMap.Marker({content: ' ', map: map});
+
+    mass.on('mouseover', function (e) {
+
+        marker.setPosition(e.data.lnglat);
+        marker.setLabel({content: e.data.name})
+    });
+
+    mass.setMap(map);
+
+    function setStyle(styleType) {
+        mass.setStyle(style[styleType]);
+    }
+</script>
+</body>
+</html>
