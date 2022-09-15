@@ -16,6 +16,7 @@ from starlette.staticfiles import StaticFiles
 
 app = FastAPI()
 app.include_router(api_v1_router)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 origins = [
     "http://localhost:8000",

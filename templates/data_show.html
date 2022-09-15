@@ -7,6 +7,9 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <title>订单分布复盘</title>
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <link rel="stylesheet" href="static/css/uikit.min.css" />
+    <script src="static/js/uikit.min.js"></script>
+    <script src="static/js/uikit-icons.min.js"></script>
     <style>
         html, body, #container {
             height: 100%;
@@ -47,17 +50,91 @@
             <span>确认费用</span>
             <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
 
-        <input type="submit" value="检索">
+        <input type="submit" value="检索" class="btn">
+        <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>
+        <input type="button" class="btn" value="起点" onclick='changeDisplayStatus(0)'/>
+        <input type="button" class="btn" value="终点" onclick='changeDisplayStatus(1)'/>
     </form>
 </div>
-<div id="container" class="map" tabindex="0"></div>
-<div class="input-card">
-    <h4>起点终点切换</h4>
-    <div class="input-item">
-        <input type="button" class="btn" value="起点" onclick='setStyle(0)'/>
-        <input type="button" class="btn" value="终点" onclick='setStyle(1)'/>
+
+
+<div id="upload-data-div" uk-modal>
+    <div class="uk-modal-dialog uk-modal-body">
+        <div class="js-upload uk-placeholder uk-text-center" >
+            <form action="/upload_data" method="post">
+                <span uk-icon="icon: cloud-upload"></span>
+                <span class="uk-text-middle">拖拽文件到这里或者</span>
+                <div uk-form-custom>
+                    <input type="file" multiple name="file">
+                    <span class="uk-link">选择文件</span>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
+<progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
+
+<script>
+
+    var bar = document.getElementById('js-progressbar');
+    UIkit.upload('.js-upload', {
+        url: '',
+        multiple: true,
+
+        beforeSend: function () {
+            console.log('beforeSend', arguments);
+        },
+        beforeAll: function () {
+            console.log('beforeAll', arguments);
+        },
+        load: function () {
+            console.log('load', arguments);
+        },
+        error: function () {
+            console.log('error', arguments);
+        },
+        complete: function () {
+            console.log('complete', arguments);
+        },
+
+        loadStart: function (e) {
+            console.log('loadStart', arguments);
+
+            bar.removeAttribute('hidden');
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        progress: function (e) {
+            console.log('progress', arguments);
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        loadEnd: function (e) {
+            console.log('loadEnd', arguments);
+
+            bar.max = e.total;
+            bar.value = e.loaded;
+        },
+
+        completeAll: function () {
+            console.log('completeAll', arguments);
+
+            setTimeout(function () {
+                bar.setAttribute('hidden', 'hidden');
+            }, 1000);
+
+            alert('Upload Completed');
+        }
+
+    });
+
+</script>
+
+<div id="container" class="map" tabindex="0"></div>
 <script type="text/javascript">
     window._AMapSecurityConfig = {
         securityJsCode: '2481220a69ee4cb0df115728d1405aab',
@@ -76,40 +153,70 @@
         viewMode: '3D',
     });
 
-    // JSAPI 2.0 支持显示设置 zIndex, zIndex 越大约靠前，默认按顺序排列
-    var style = [{
-        url: 'https://webapi.amap.com/images/mass/mass0.png',
-        anchor: new AMap.Pixel(6, 6),
-        size: new AMap.Size(11, 11),
-    },
-        {
-            // url: 'https://webapi.amap.com/images/mass/mass1.png',
-            url: 'http://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
-            anchor: new AMap.Pixel(4, 4),  // 图标显示位置偏移量，基准点为图标左上角
-            size: new AMap.Size(11, 11),
-        }
-    ];
+    var clickHandler = function(e) {
+        console.log('您在[ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ]的位置点击了地图！');
+    };
 
-    var citys = {{ citys | safe }};
-    var mass = new AMap.MassMarks(citys, {
+    // 绑定事件
+    map.on('click', clickHandler);
+
+    var citys_origin = {{citys_origin|safe}};
+    var mass = new AMap.MassMarks(citys_origin, {
         opacity: 0.8,
         zIndex: 111,
         cursor: 'pointer',
-        style: style
+        style: {
+            url: 'https://webapi.amap.com/images/mass/mass0.png',
+            anchor: new AMap.Pixel(6, 6),
+            size: new AMap.Size(11, 11)}
+    });
+
+    var citys_destination = {{citys_destination|safe}};
+    var destinationMass = new AMap.MassMarks(citys_destination, {
+         opacity: 0.8,
+        zIndex: 111,
+        cursor: 'pointer',
+        style: {
+            url: 'http://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+            anchor: new AMap.Pixel(4, 4),  // 图标显示位置偏移量，基准点为图标左上角
+            size: new AMap.Size(11, 11)}
     });
 
     var marker = new AMap.Marker({content: ' ', map: map});
 
     mass.on('mouseover', function (e) {
-
         marker.setPosition(e.data.lnglat);
         marker.setLabel({content: e.data.name})
     });
 
-    mass.setMap(map);
+    mass.on('click', function (e) {
+        alert('您点击的节点详情为：  '+e.data.lnglat+','+e.data.name);
+    })
 
-    function setStyle(styleType) {
-        mass.setStyle(style[styleType]);
+    mass.setMap(map);
+    destinationMass.setMap(map);
+
+    var massStatus = 1;
+    var destinationMassStatus = 1;
+    function changeDisplayStatus(massType) {
+        // mass.setStyle(style[styleType]);
+        if (massType == 0) {
+            if (massStatus == 0) {
+                mass.show();
+                massStatus = 1;
+            } else {
+                mass.hide();
+                massStatus = 0;
+            }
+        } else {
+            if (destinationMassStatus == 0) {
+                destinationMass.show();
+                destinationMassStatus = 1;
+            } else {
+                destinationMass.hide();
+                destinationMassStatus = 0;
+            }
+        }
     }
 </script>
 </body>

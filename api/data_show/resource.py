@@ -27,17 +27,19 @@ data_show_router = APIRouter()
 def order_situation_review(request: Request):
     query_result = OriginData.objects(Q(origin_detail__exists=True)
                                       & Q(destination_detail__exists=True)).all()
-    data = []
+    origin_data = []
+    destination_data = []
     for each_order in query_result:
-        data.append({"name": each_order.origin,
-                     "lnglat": each_order.origin_detail.lnglat,
-                     "style": 0})
-        data.append({"name": each_order.destination,
-                     "lnglat": each_order.destination_detail.lnglat,
-                     "style": 1})
+        origin_data.append({"name": each_order.origin,
+                            "lnglat": each_order.origin_detail.lnglat,
+                            "style": 0})
+        destination_data.append({"name": each_order.destination,
+                                 "lnglat": each_order.destination_detail.lnglat,
+                                 "style": 1})
     return templates.TemplateResponse("data_show.html",
                                       {"request": request,
-                                       "citys": data,
+                                       "citys_origin": origin_data,
+                                       "citys_destination": destination_data,
                                        "start_time": "2022-07-01 00:00:00",
                                        "end_time": "9999-07-01 00:00:00"})
 
@@ -65,16 +67,18 @@ def order_situation_review(request: Request, start_time: datetime = Form(title="
                                       & Q(channel_name__in=[channel_name_1, channel_name_2, channel_name_3])
                                       & Q(order_way__in=[order_way_1, order_way_2])
                                       & Q(order_status__in=[order_status_1, order_status_2, order_status_3])).all()
-    data = []
+    origin_data = []
+    destination_data = []
     for each_order in query_result:
-        data.append({"name": each_order.origin,
-                     "lnglat": each_order.origin_detail.lnglat,
-                     "style": 0})
-        data.append({"name": each_order.destination,
-                     "lnglat": each_order.destination_detail.lnglat,
-                     "style": 1})
+        origin_data.append({"name": each_order.origin,
+                            "lnglat": each_order.origin_detail.lnglat,
+                            "style": 0})
+        destination_data.append({"name": each_order.destination,
+                                 "lnglat": each_order.destination_detail.lnglat,
+                                 "style": 1})
     return templates.TemplateResponse("data_show.html",
                                       {"request": request,
-                                       "citys": data,
+                                       "citys_origin": origin_data,
+                                       "citys_destination": destination_data,
                                        "start_time": start_time,
                                        "end_time": end_time})

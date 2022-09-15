@@ -41,8 +41,11 @@ def get_addr_detail(abbreviated_address):
         response_data = json.loads(r.text)
         if len(response_data.get("pois", [])) > 0:  # 查询到了数据  # fixme: 后期可以考虑换成地理编码接口
             parse_result["lnglat"] = response_data["pois"][0]["location"].split(",")
-            tmp_addr = abbreviated_address if len(response_data["pois"][0]["address"]) == 0 \
-                else response_data["pois"][0]["address"]
+            try:
+                tmp_addr = abbreviated_address if len(response_data["pois"][0]["address"]) == 0 \
+                    else response_data["pois"][0]["address"]
+            except KeyError as _:
+                tmp_addr = response_data["pois"][0].get("name", "")
             parse_result["address"] = tmp_addr if response_data["pois"][0]["adname"] in tmp_addr \
                 else response_data["pois"][0]["adname"] + tmp_addr
             parse_result["business_area"] = response_data["pois"][0]["business_area"] if isinstance(
