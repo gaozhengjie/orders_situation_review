@@ -7,9 +7,11 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <title>订单分布复盘</title>
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
-    <link rel="stylesheet" href="static/css/uikit.min.css" />
-    <script src="static/js/uikit.min.js"></script>
-    <script src="static/js/uikit-icons.min.js"></script>
+    <link rel="stylesheet" href="static/css/uikit.css" />
+    <link rel="stylesheet" href="static/css/uikit-rtl.css" />
+    <script src="static/js/uikit.js"></script>
+    <script src="static/js/uikit-icons.js"></script>
+    <script src="static/js/jquery-3.6.1.js"></script>
     <style>
         html, body, #container {
             height: 100%;
@@ -50,89 +52,124 @@
             <span>确认费用</span>
             <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
 
-        <input type="submit" value="检索" class="btn">
-        <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>
+        <input type="submit" value="检索">
+<!--        <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>-->
+
         <input type="button" class="btn" value="起点" onclick='changeDisplayStatus(0)'/>
         <input type="button" class="btn" value="终点" onclick='changeDisplayStatus(1)'/>
     </form>
-</div>
 
+<!--    <form action="/upload_data" method="post" enctype="multipart/form-data">-->
+<!--        <div class="uk-margin" uk-margin>-->
+<!--            <div uk-form-custom="target: true">-->
+<!--                <input type="file" name="file">-->
+<!--                <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled>-->
+<!--            </div>-->
+<!--            <button class="uk-button uk-button-default">Submit</button>-->
+<!--        </div>-->
+<!--    </form>-->
 
-<div id="upload-data-div" uk-modal>
-    <div class="uk-modal-dialog uk-modal-body">
-        <div class="js-upload uk-placeholder uk-text-center" >
-            <form action="/upload_data" method="post">
-                <span uk-icon="icon: cloud-upload"></span>
-                <span class="uk-text-middle">拖拽文件到这里或者</span>
-                <div uk-form-custom>
-                    <input type="file" multiple name="file">
-                    <span class="uk-link">选择文件</span>
-                </div>
-            </form>
-        </div>
+    <div>
+        <input type="file" id="uploadFileInput">
+        <button id="uploadFileButton">提交</button>
     </div>
 </div>
 
-<progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>
-
-<script>
-
-    var bar = document.getElementById('js-progressbar');
-    UIkit.upload('.js-upload', {
-        url: '',
-        multiple: true,
-
-        beforeSend: function () {
-            console.log('beforeSend', arguments);
-        },
-        beforeAll: function () {
-            console.log('beforeAll', arguments);
-        },
-        load: function () {
-            console.log('load', arguments);
-        },
-        error: function () {
-            console.log('error', arguments);
-        },
-        complete: function () {
-            console.log('complete', arguments);
-        },
-
-        loadStart: function (e) {
-            console.log('loadStart', arguments);
-
-            bar.removeAttribute('hidden');
-            bar.max = e.total;
-            bar.value = e.loaded;
-        },
-
-        progress: function (e) {
-            console.log('progress', arguments);
-
-            bar.max = e.total;
-            bar.value = e.loaded;
-        },
-
-        loadEnd: function (e) {
-            console.log('loadEnd', arguments);
-
-            bar.max = e.total;
-            bar.value = e.loaded;
-        },
-
-        completeAll: function () {
-            console.log('completeAll', arguments);
-
-            setTimeout(function () {
-                bar.setAttribute('hidden', 'hidden');
-            }, 1000);
-
-            alert('Upload Completed');
-        }
-
-    });
-
+<script type="text/javascript">
+    $(function () {
+        $("#uploadFileButton").on("click", function () {
+            var formdata = new FormData();  // 通过使用FormDataa来生成表单对象提交，从而可以使用流的形式
+            formdata.append("file", $("#uploadFileInput")[0].files[0]);  // 使用append方法将文件对象添加到formdata
+            $.ajax({
+                type: "post",  // 使用post方法上传文件
+                url: "/upload_data",  // 后台请求地址
+                data: formdata,  // 上传数据
+                contentType: false,  // post中contentType默认的值为：application/x-www-form-urlencoded
+                processData: false,  // processData默认的值为true，会转变数据格式，上传不需要转，所以设置为false
+                success: function (data) {
+                    alert(data.info);
+                },
+                error: function () {
+                    alert("error");
+                }
+            })
+        })
+    })
 </script>
+
+<!--<div id="upload-data-div" uk-modal>-->
+<!--    <div class="uk-modal-dialog uk-modal-body">-->
+<!--        <div class="js-upload uk-placeholder uk-text-center" >-->
+<!--            <form action="/upload_data" method="post" enctype="multipart/form-data">-->
+<!--                <span uk-icon="icon: cloud-upload"></span>-->
+<!--                <span class="uk-text-middle">拖拽文件到这里或者</span>-->
+<!--                <div uk-form-custom>-->
+<!--                    <input type="file" name="file">-->
+<!--                    <span class="uk-link">选择文件</span>-->
+<!--                </div>-->
+<!--                <input type="submit" value="提交" class="btn">-->
+<!--            </form>-->
+<!--            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>-->
+
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+
+<!--<script>-->
+<!--    var bar = document.getElementById('js-progressbar');-->
+<!--    UIkit.upload('.js-upload', {-->
+<!--        url: '',-->
+<!--        multiple: true,-->
+
+<!--        beforeSend: function () {-->
+<!--            console.log('beforeSend', arguments);-->
+<!--        },-->
+<!--        beforeAll: function () {-->
+<!--            console.log('beforeAll', arguments);-->
+<!--        },-->
+<!--        load: function () {-->
+<!--            console.log('load', arguments);-->
+<!--        },-->
+<!--        error: function () {-->
+<!--            console.log('error', arguments);-->
+<!--        },-->
+<!--        complete: function () {-->
+<!--            console.log('complete', arguments);-->
+<!--        },-->
+
+<!--        loadStart: function (e) {-->
+<!--            console.log('loadStart', arguments);-->
+
+<!--            bar.removeAttribute('hidden');-->
+<!--            bar.max = e.total;-->
+<!--            bar.value = e.loaded;-->
+<!--        },-->
+
+<!--        progress: function (e) {-->
+<!--            console.log('progress', arguments);-->
+
+<!--            bar.max = e.total;-->
+<!--            bar.value = e.loaded;-->
+<!--        },-->
+
+<!--        loadEnd: function (e) {-->
+<!--            console.log('loadEnd', arguments);-->
+
+<!--            bar.max = e.total;-->
+<!--            bar.value = e.loaded;-->
+<!--        },-->
+
+<!--        completeAll: function () {-->
+<!--            console.log('completeAll', arguments);-->
+<!--            setTimeout(function () {-->
+<!--                bar.setAttribute('hidden', 'hidden');-->
+<!--            }, 1000);-->
+
+<!--            console.log('Upload Completed');-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
 
 <div id="container" class="map" tabindex="0"></div>
 <script type="text/javascript">

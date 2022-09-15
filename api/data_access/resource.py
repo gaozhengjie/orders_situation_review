@@ -17,6 +17,7 @@ from mongoengine.errors import ValidationError
 import requests
 import json
 from mongoengine.queryset.visitor import Q
+from fastapi.responses import RedirectResponse
 
 data_access_router = APIRouter()
 
@@ -78,7 +79,9 @@ def get_lng_lat():
 
 @data_access_router.post("/upload_data", name="导入数据", description="上传需要分析的csv文件")
 async def upload_data(file: UploadFile):  # fixme: 版本原因，该版本pydantic不支持UploadFile类型，需要实例化
+    # async def upload_data(file: bytes = File()):  # fixme: 版本原因，该版本pydantic不支持UploadFile类型，需要实例化
     content = await file.read()
+    # content = file
     try:
         order_list = list(
             map(lambda x: x.split(","),
@@ -140,4 +143,5 @@ async def upload_data(file: UploadFile):  # fixme: 版本原因，该版本pydan
             except ValidationError as _:  # 数据校验失败，直接跳过该条数据
                 pass
 
-    return Response()
+    # return RedirectResponse("/index", status_code=303)
+    return Response(info="数据上传成功")
