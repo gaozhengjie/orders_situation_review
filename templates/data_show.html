@@ -9,9 +9,12 @@
     <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
     <link rel="stylesheet" href="static/css/uikit.css" />
     <link rel="stylesheet" href="static/css/uikit-rtl.css" />
+    <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.17/jquery.datetimepicker.min.css" rel="stylesheet">
     <script src="static/js/uikit.js"></script>
     <script src="static/js/uikit-icons.js"></script>
     <script src="static/js/jquery-3.6.1.js"></script>
+    <script src="https://cdn.bootcss.com/jquery-datetimepicker/2.5.17/jquery.datetimepicker.full.min.js"></script>
+
     <style>
         html, body, #container {
             height: 100%;
@@ -76,6 +79,10 @@
 </div>
 
 <script type="text/javascript">
+    $.datetimepicker.setLocale('zh');
+    $('#start_time').datetimepicker();
+    $('#end_time').datetimepicker();
+
     $(function () {
         $("#uploadFileButton").on("click", function () {
             var formdata = new FormData();  // 通过使用FormDataa来生成表单对象提交，从而可以使用流的形式

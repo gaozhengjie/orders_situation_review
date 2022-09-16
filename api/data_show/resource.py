@@ -40,8 +40,8 @@ def order_situation_review(request: Request):
                                       {"request": request,
                                        "citys_origin": origin_data,
                                        "citys_destination": destination_data,
-                                       "start_time": "2022-07-01 00:00:00",
-                                       "end_time": "9999-07-01 00:00:00"})
+                                       "start_time": "2022/07/01 00:00",
+                                       "end_time": datetime.now().strftime("%Y/%m/%d %H:%M")})
 
 
 # Request在路径操作中声明一个参数，该参数将返回模板。
@@ -50,8 +50,8 @@ def order_situation_review(request: Request):
 # 基于用户的筛选
 @data_show_router.post("/order_situation_review", name="地图数据展示", description="地图数据展示")
 # def order_situation_review(request: Request, query_condition: QueryCondition):
-def order_situation_review(request: Request, start_time: datetime = Form(title="开始时间"),
-                           end_time: datetime = Form(title="结束时间"),
+def order_situation_review(request: Request, start_time: str = Form(title="开始时间"),
+                           end_time: str = Form(title="结束时间"),
                            channel_name_1: str = Form(title="主渠道", type=str, default=""),
                            channel_name_2: str = Form(title="微信小程序", type=str, default=""),
                            channel_name_3: str = Form(title="司机端", type=str, default=""),
@@ -60,6 +60,8 @@ def order_situation_review(request: Request, start_time: datetime = Form(title="
                            order_status_1: str = Form(title="付款完成", type=str, default=""),
                            order_status_2: str = Form(title="订单取消", type=str, default=""),
                            order_status_3: str = Form(title="确认费用", type=str, default="")):
+    start_time = datetime.strptime(start_time, "%Y/%m/%d %H:%M")
+    end_time = datetime.strptime(end_time, "%Y/%m/%d %H:%M")
     query_result = OriginData.objects(Q(origin_detail__exists=True)
                                       & Q(destination_detail__exists=True)
                                       & Q(order_time__gte=start_time)
