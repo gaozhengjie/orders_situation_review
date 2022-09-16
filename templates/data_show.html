@@ -230,15 +230,48 @@
 
     mass.on('mouseover', function (e) {
         marker.setPosition(e.data.lnglat);
-        marker.setLabel({content: e.data.name})
+        marker.setLabel({content: e.data.name});
     });
 
-    mass.on('click', function (e) {
-        alert('您点击的节点详情为：  '+e.data.lnglat+','+e.data.name);
-    })
+    mass.on("click", function (e) {
+        //构建信息窗体中显示的内容
+        var info = [];
+        info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>订单详情</b>");
+        info.push("订单编号：" + e.data.utility_type_order_number);
+        info.push("渠道名称：" + e.data.channel_name);
+        info.push("出发地：" + e.data.origin);
+        info.push("目的地：" + e.data.destination);
+        info.push("订单状态：" + e.data.order_status);
+        info.push("下单时间：" + e.data.order_time);
+        info.push("订单类型：" + e.data.order_type);
+        info.push("下单类型：" + e.data.order_way);
+        info.push("服务类型：" + e.data.service_type);
+        infoWindow = new AMap.InfoWindow({
+            content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+        });
+        infoWindow.open(map, e.data.lnglat);
+    });
 
+    destinationMass.on("click", function (e) {
+        var info = [];
+        info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>订单详情</b>");
+        info.push("订单编号：" + e.data.utility_type_order_number);
+        info.push("渠道名称：" + e.data.channel_name);
+        info.push("出发地：" + e.data.origin);
+        info.push("目的地：" + e.data.destination);
+        info.push("订单状态：" + e.data.order_status);
+        info.push("下单时间：" + e.data.order_time);
+        info.push("订单类型：" + e.data.order_type);
+        info.push("下单类型：" + e.data.order_way);
+        info.push("服务类型：" + e.data.service_type);
+        infoWindow = new AMap.InfoWindow({
+            content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+        });
+        infoWindow.open(map, e.data.lnglat);
+    });
+
+    destinationMass.setMap(map);  // 先添加终点图层，再添加起点图层，起点覆盖在终点之上，因为用户更关注起点
     mass.setMap(map);
-    destinationMass.setMap(map);
 
     var massStatus = 1;
     var destinationMassStatus = 1;

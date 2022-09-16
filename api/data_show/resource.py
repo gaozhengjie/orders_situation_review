@@ -32,10 +32,28 @@ def order_situation_review(request: Request):
     for each_order in query_result:
         origin_data.append({"name": each_order.origin,
                             "lnglat": each_order.origin_detail.lnglat,
-                            "style": 0})
+                            "style": 0,
+                            "utility_type_order_number": each_order.id,
+                            "channel_name": each_order.channel_name,
+                            "origin": each_order.origin,
+                            "destination": each_order.destination,
+                            "order_status": each_order.order_status,
+                            "order_time": each_order.order_time.strftime("%Y/%m/%d %H:%M"),
+                            "order_type": each_order.order_type,
+                            "order_way": each_order.order_way,
+                            "service_type": each_order.service_type})
         destination_data.append({"name": each_order.destination,
                                  "lnglat": each_order.destination_detail.lnglat,
-                                 "style": 1})
+                                 "style": 1,
+                                 "utility_type_order_number": each_order.id,
+                                 "channel_name": each_order.channel_name,
+                                 "origin": each_order.origin,
+                                 "destination": each_order.destination,
+                                 "order_status": each_order.order_status,
+                                 "order_time": each_order.order_time.strftime("%Y/%m/%d %H:%M"),
+                                 "order_type": each_order.order_type,
+                                 "order_way": each_order.order_way,
+                                 "service_type": each_order.service_type})
     return templates.TemplateResponse("data_show.html",
                                       {"request": request,
                                        "citys_origin": origin_data,
@@ -74,10 +92,28 @@ def order_situation_review(request: Request, start_time: str = Form(title="å¼€å§
     for each_order in query_result:
         origin_data.append({"name": each_order.origin,
                             "lnglat": each_order.origin_detail.lnglat,
-                            "style": 0})
+                            "style": 0,
+                            "utility_type_order_number": each_order.id,
+                            "channel_name": each_order.channel_name,
+                            "origin": each_order.origin,
+                            "destination": each_order.destination,
+                            "order_status": each_order.order_status,
+                            "order_time": each_order.order_time.strftime("%Y/%m/%d %H:%M"),
+                            "order_type": each_order.order_type,
+                            "order_way": each_order.order_way,
+                            "service_type": each_order.service_type})
         destination_data.append({"name": each_order.destination,
                                  "lnglat": each_order.destination_detail.lnglat,
-                                 "style": 1})
+                                 "style": 1,
+                                 "utility_type_order_number": each_order.id,
+                                 "channel_name": each_order.channel_name,
+                                 "origin": each_order.origin,
+                                 "destination": each_order.destination,
+                                 "order_status": each_order.order_status,
+                                 "order_time": each_order.order_time.strftime("%Y/%m/%d %H:%M"),
+                                 "order_type": each_order.order_type,
+                                 "order_way": each_order.order_way,
+                                 "service_type": each_order.service_type})
     return templates.TemplateResponse("data_show.html",
                                       {"request": request,
                                        "citys_origin": origin_data,
