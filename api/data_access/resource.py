@@ -67,6 +67,9 @@ def get_lng_lat():
             if len(origin_detail) != 0:
                 each_order.origin_detail = AddressInfo(**origin_detail)
                 each_order.save()
+            else:
+                each_order.delete()
+                continue
         # 判断目的地址是否已经解析
         if each_order.destination_detail is None:
             destination = each_order.destination
@@ -74,6 +77,8 @@ def get_lng_lat():
             if len(destination_detail) != 0:
                 each_order.destination_detail = AddressInfo(**destination_detail)
                 each_order.save()
+            else:
+                each_order.delete()
     return Response()
 
 

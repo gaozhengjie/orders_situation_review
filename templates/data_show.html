@@ -6,9 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
     <title>订单分布复盘</title>
-    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
-    <link rel="stylesheet" href="static/css/uikit.css" />
-    <link rel="stylesheet" href="static/css/uikit-rtl.css" />
+    <link rel="stylesheet" href="static/css/demo-center.css"/>
+    <link rel="stylesheet" href="static/css/uikit.css"/>
+    <link rel="stylesheet" href="static/css/uikit-rtl.css"/>
     <link href="https://cdn.bootcss.com/jquery-datetimepicker/2.5.17/jquery.datetimepicker.min.css" rel="stylesheet">
     <script src="static/js/uikit.js"></script>
     <script src="static/js/uikit-icons.js"></script>
@@ -38,43 +38,42 @@
                                                     value="{{start_time }}"/>
         <label for="end_time">结束时间：</label><input id="end_time" name="end_time" type="datetime" value="{{end_time}}"/>
 
-            <span>主渠道</span>
-            <input type="checkbox" value="主渠道" name="channel_name_1" checked="checked">
-            <span>微信小程序</span>
-            <input type="checkbox" value="微信小程序" name="channel_name_2" checked="checked">
-            <span>司机端</span>
-            <input type="checkbox" value="司机端" name="channel_name_3" checked="checked">
-            <span>线上叫单</span>
-            <input type="checkbox" value="线上叫单" name="order_way_1" checked="checked">
-            <span>报单</span>
-            <input type="checkbox" value="报单" name="order_way_2" checked="checked">
-            <span>付款完成</span>
-            <input type="checkbox" value="付款完成" name="order_status_1" checked="checked">
-            <span>订单取消</span>
-            <input type="checkbox" value="订单取消" name="order_status_2" checked="checked">
-            <span>确认费用</span>
-            <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
+        <span>主渠道</span>
+        <input type="checkbox" value="主渠道" name="channel_name_1" checked="checked">
+        <span>微信小程序</span>
+        <input type="checkbox" value="微信小程序" name="channel_name_2" checked="checked">
+        <span>司机端</span>
+        <input type="checkbox" value="司机端" name="channel_name_3" checked="checked">
+        <span>线上叫单</span>
+        <input type="checkbox" value="线上叫单" name="order_way_1" checked="checked">
+        <span>报单</span>
+        <input type="checkbox" value="报单" name="order_way_2" checked="checked">
+        <span>付款完成</span>
+        <input type="checkbox" value="付款完成" name="order_status_1" checked="checked">
+        <span>订单取消</span>
+        <input type="checkbox" value="订单取消" name="order_status_2" checked="checked">
+        <span>确认费用</span>
+        <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
 
         <input type="submit" value="检索">
-<!--        <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>-->
-
-        <input type="button" class="btn" value="起点" onclick='changeDisplayStatus(0)'/>
-        <input type="button" class="btn" value="终点" onclick='changeDisplayStatus(1)'/>
+        <!--        <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>-->
     </form>
 
-<!--    <form action="/upload_data" method="post" enctype="multipart/form-data">-->
-<!--        <div class="uk-margin" uk-margin>-->
-<!--            <div uk-form-custom="target: true">-->
-<!--                <input type="file" name="file">-->
-<!--                <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled>-->
-<!--            </div>-->
-<!--            <button class="uk-button uk-button-default">Submit</button>-->
-<!--        </div>-->
-<!--    </form>-->
+    <!--    <form action="/upload_data" method="post" enctype="multipart/form-data">-->
+    <!--        <div class="uk-margin" uk-margin>-->
+    <!--            <div uk-form-custom="target: true">-->
+    <!--                <input type="file" name="file">-->
+    <!--                <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled>-->
+    <!--            </div>-->
+    <!--            <button class="uk-button uk-button-default">Submit</button>-->
+    <!--        </div>-->
+    <!--    </form>-->
 
     <div>
         <input type="file" id="uploadFileInput">
         <button id="uploadFileButton">提交</button>
+
+        <button id="get_addr">补全订单的经纬度信息</button>
     </div>
 </div>
 
@@ -100,8 +99,27 @@
                     alert("error");
                 }
             })
+        });
+
+        $("#get_addr").on("click", function () {
+            $("#get_addr").attr("disabled", true);
+            $.ajax({
+                type: "get",
+                url: "/get_lng_lat",
+                success: function () {
+
+                    alert("订单的经纬度信息补充完毕");
+                    $("#get_addr").removeAttr("disabled");
+                },
+                error: function () {
+
+                    alert("订单的经纬度信息补充失败");
+                    $("#get_addr").removeAttr("disabled");
+                }
+            })
         })
-    })
+    });
+
 </script>
 
 <!--<div id="upload-data-div" uk-modal>-->
@@ -179,6 +197,14 @@
 <!--</script>-->
 
 <div id="container" class="map" tabindex="0"></div>
+
+<div class="input-card">
+    <div class="input-item">
+        <input type="button" class="btn" value="起点" onclick='changeDisplayStatus(0)'/>
+        <input type="button" class="btn" value="终点" onclick='changeDisplayStatus(1)'/>
+    </div>
+</div>
+
 <script type="text/javascript">
     window._AMapSecurityConfig = {
         securityJsCode: '2481220a69ee4cb0df115728d1405aab',
@@ -197,14 +223,14 @@
         viewMode: '3D',
     });
 
-    var clickHandler = function(e) {
-        console.log('您在[ '+e.lnglat.getLng()+','+e.lnglat.getLat()+' ]的位置点击了地图！');
+    var clickHandler = function (e) {
+        console.log('您在[ ' + e.lnglat.getLng() + ',' + e.lnglat.getLat() + ' ]的位置点击了地图！');
     };
 
     // 绑定事件
     map.on('click', clickHandler);
 
-    var citys_origin = {{citys_origin|safe}};
+    var citys_origin = {{ citys_origin | safe }};
     var mass = new AMap.MassMarks(citys_origin, {
         opacity: 0.8,
         zIndex: 111,
@@ -212,26 +238,28 @@
         style: {
             url: 'https://webapi.amap.com/images/mass/mass0.png',
             anchor: new AMap.Pixel(6, 6),
-            size: new AMap.Size(11, 11)}
+            size: new AMap.Size(11, 11)
+        }
     });
 
-    var citys_destination = {{citys_destination|safe}};
+    var citys_destination = {{ citys_destination | safe }};
     var destinationMass = new AMap.MassMarks(citys_destination, {
-         opacity: 0.8,
+        opacity: 0.8,
         zIndex: 111,
         cursor: 'pointer',
         style: {
             url: 'http://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
             anchor: new AMap.Pixel(4, 4),  // 图标显示位置偏移量，基准点为图标左上角
-            size: new AMap.Size(11, 11)}
+            size: new AMap.Size(11, 11)
+        }
     });
 
     var marker = new AMap.Marker({content: ' ', map: map});
 
-    mass.on('mouseover', function (e) {
-        marker.setPosition(e.data.lnglat);
-        marker.setLabel({content: e.data.name});
-    });
+    // mass.on('mouseover', function (e) {
+    //     marker.setPosition(e.data.lnglat);
+    //     marker.setLabel({content: e.data.name});
+    // });
 
     mass.on("click", function (e) {
         //构建信息窗体中显示的内容
@@ -275,6 +303,7 @@
 
     var massStatus = 1;
     var destinationMassStatus = 1;
+
     function changeDisplayStatus(massType) {
         // mass.setStyle(style[styleType]);
         if (massType == 0) {

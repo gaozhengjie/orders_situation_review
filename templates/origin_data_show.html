@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>订单数据展示</title>
+    <link rel="stylesheet" href="/static/css/uikit.css"/>
+    <link rel="stylesheet" href="/static/css/uikit-rtl.css"/>
+    <script src="/static/js/uikit.js"></script>
+    <script src="/static/js/uikit-icons.js"></script>
+    <script src="/static/js/jquery-3.6.1.js"></script>
+</head>
+<body>
+<div uk-grid>
+    <p>当前共计有x条数据的地址经纬度没有补全</p>
+    <p>今天剩余查询次数</p>
+    <table class="uk-table uk-table-hover uk-table-divider">
+        <thead>
+        <tr>
+            <th>订单类型</th>
+            <th>实效类型/订单号</th>
+            <th>渠道订单号</th>
+            <!--        <th>渠道名称</th>-->
+            <!--        <th>下单类型</th>-->
+            <!--        <th>订单状态</th>-->
+            <!--        <th>下单时间</th>-->
+            <!--        <th>预约时间</th>-->
+            <!--        <th>完成时间</th>-->
+            <!--        <th>出发地</th>-->
+            <!--        <th>目的地</th>-->
+            <!--        <th>服务类型</th>-->
+            <!--        <th>运力公司</th>-->
+            <!--        <th>司机编号</th>-->
+            <!--        <th>司机姓名</th>-->
+            <!--        <th>司机电话</th>-->
+            <!--        <th>客户姓名</th>-->
+            <!--        <th>客户电话</th>-->
+            <!--        <th>订单总金额</th>-->
+            <!--        <th>退款金额</th>-->
+            <!--        <th>赔付金额</th>-->
+            <th>出发地经纬度</th>
+            <th>出发地详细地址</th>
+            <th>出发地商区</th>
+            <th>出发地行政区</th>
+            <th>目的地经纬度</th>
+            <th>目的地详细地址</th>
+            <th>目的地商区</th>
+            <th>目的地行政区</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for each_order in order_list %}
+        <tr>
+            <td>{{ each_order.order_type }}</td>
+            <td>{{ each_order.utility_type_order_number }}</td>
+            <td>{{ each_order.channel_order_number }}</td>
+            <td>{{ "" if origin_detail not in each_order else each_order.origin_detail.lnglat }}</td>
+            <td>{{ "" if origin_detail not in each_order else each_order.origin_detail.address }}</td>
+            <td>{{ "" if origin_detail not in each_order else each_order.origin_detail.business_area }}</td>
+            <td>{{ "" if origin_detail not in each_order else each_order.origin_detail.adname }}</td>
+            <td>{{ "" if destination_detail not in each_order else each_order.destination_detail.lnglat }}</td>
+            <td>{{ "" if destination_detail not in each_order else each_order.destination_detail.address }}</td>
+            <td>{{ "" if destination_detail not in each_order else each_order.destination_detail.business_area }}</td>
+            <td>{{ "" if destination_detail not in each_order else each_order.destination_detail.adname }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul class="uk-pagination" uk-margin>
+        共计{{count}}数据，当前第x页
+        <li><a href="#"><span uk-pagination-previous></span></a></li>
+        <li><a href="#"><span uk-pagination-next></span></a></li>
+    </ul>
+</div>
+</body>
+</html>

@@ -12,3 +12,12 @@ from pydantic import BaseModel, Field
 class Response(BaseModel):
     info: str = Field(title="返回信息", default="请求成功")
     code: int = Field(title="返回代码", default=1, description="1表示正常，0表示异常")
+
+
+class ResponseData(Response):
+    data: list = Field(title="返回数据", default=[])
+
+
+class ResponseDataWithPagination(ResponseData):
+    count: int = Field(title="数据总条数", default=0)
+    pagination: int = Field(title="总页码", default=1)

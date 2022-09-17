@@ -120,3 +120,16 @@ def order_situation_review(request: Request, start_time: str = Form(title="开�
                                        "citys_destination": destination_data,
                                        "start_time": start_time,
                                        "end_time": end_time})
+
+
+@data_show_router.get("/origin_data_show/", name="订单数据列表展示", description="订单数据列表展示")
+def origin_data_show(request: Request, count: int = 10, pagination: int = 1):
+    query_result = OriginData.objects.all()
+    data = json.loads(query_result[(pagination - 1) * count:pagination * count].to_json())
+    data_count = query_result.count()
+    return templates.TemplateResponse("origin_data_show.html", {"request": request,
+                                                                "order_list": data,
+                                                                "count": data_count,
+                                                                "pagination": pagination})
+
+# TODO: 更新指定时间域的数据
