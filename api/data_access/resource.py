@@ -120,7 +120,7 @@ async def upload_data(file: UploadFile):  # fixme: 版本原因，该版本pydan
                          "退款金额": "refund_amount",
                          "赔付金额": "reparation_amount"}
     header = []
-    for idx, each_order in enumerate(tqdm(order_list, desc="导入数据")):
+    for idx, each_order in enumerate(tqdm(order_list, desc="导入数据")):  # TODO: 需要根据主键判断该数据是否存在，若不存在，则导入，否则跳过
         if idx == 0:  # 第1行，表头，验证表格式是否正确
             if set(each_order) == set(csv_header2db_key.keys()):
                 header = each_order
@@ -143,6 +143,8 @@ async def upload_data(file: UploadFile):  # fixme: 版本原因，该版本pydan
                 if key == "实效类型/订单号":
                     value = value.split("/")[-1]
                 tmp[csv_header2db_key[key]] = value
+            if OriginData.objects(utility_type_order_number=tmp["utility_type_order_number"]).count() > 0:
+                continue
             try:
                 OriginData(**tmp).save()
             except ValidationError as _:  # 数据校验失败，直接跳过该条数据

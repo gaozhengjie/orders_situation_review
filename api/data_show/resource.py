@@ -78,12 +78,10 @@ def order_situation_review(request: Request, start_time: str = Form(title="开�
                            order_status_1: str = Form(title="付款完成", type=str, default=""),
                            order_status_2: str = Form(title="订单取消", type=str, default=""),
                            order_status_3: str = Form(title="确认费用", type=str, default="")):
-    start_time = datetime.strptime(start_time, "%Y/%m/%d %H:%M")
-    end_time = datetime.strptime(end_time, "%Y/%m/%d %H:%M")
     query_result = OriginData.objects(Q(origin_detail__exists=True)
                                       & Q(destination_detail__exists=True)
-                                      & Q(order_time__gte=start_time)
-                                      & Q(order_time__lte=end_time)
+                                      & Q(order_time__gte=datetime.strptime(start_time, "%Y/%m/%d %H:%M"))
+                                      & Q(order_time__lte=datetime.strptime(end_time, "%Y/%m/%d %H:%M"))
                                       & Q(channel_name__in=[channel_name_1, channel_name_2, channel_name_3])
                                       & Q(order_way__in=[order_way_1, order_way_2])
                                       & Q(order_status__in=[order_status_1, order_status_2, order_status_3])).all()

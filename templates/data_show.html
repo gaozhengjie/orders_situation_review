@@ -22,8 +22,8 @@
         }
 
         .input-card .btn {
-            margin-right: 1.2rem;
-            width: 9rem;
+            margin-right: 1rem;
+            width: 3rem;
         }
 
         .input-card .btn:last-child {
@@ -56,7 +56,7 @@
         <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
 
         <input type="submit" value="检索">
-        <!--        <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>-->
+<!--                <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>-->
     </form>
 
     <!--    <form action="/upload_data" method="post" enctype="multipart/form-data">-->
@@ -69,12 +69,7 @@
     <!--        </div>-->
     <!--    </form>-->
 
-    <div>
-        <input type="file" id="uploadFileInput">
-        <button id="uploadFileButton">提交</button>
 
-        <button id="get_addr">补全订单的经纬度信息</button>
-    </div>
 </div>
 
 <script type="text/javascript">
@@ -200,8 +195,8 @@
 
 <div class="input-card">
     <div class="input-item">
-        <input type="button" class="btn" value="起点" onclick='changeDisplayStatus(0)'/>
-        <input type="button" class="btn" value="终点" onclick='changeDisplayStatus(1)'/>
+        <input type="button" class="btn" value="起点" id="origin_button" onclick='changeDisplayStatus(0)'/>
+        <input type="button" class="btn" value="终点" id="destination_button" onclick='changeDisplayStatus(1)'/>
     </div>
 </div>
 
@@ -310,20 +305,35 @@
             if (massStatus == 0) {
                 mass.show();
                 massStatus = 1;
+                document.getElementById("origin_button").style.color = "#ffffff";
+                document.getElementById("origin_button").style.backgroundColor = "#25A5F7";
             } else {
                 mass.hide();
                 massStatus = 0;
+                document.getElementById("origin_button").style.color = "#25A5F7";
+                document.getElementById("origin_button").style.backgroundColor = "#ffffff";
             }
         } else {
             if (destinationMassStatus == 0) {
                 destinationMass.show();
                 destinationMassStatus = 1;
+                document.getElementById("destination_button").style.color = "#ffffff";
+                document.getElementById("destination_button").style.backgroundColor = "#25A5F7";
             } else {
                 destinationMass.hide();
                 destinationMassStatus = 0;
+                document.getElementById("destination_button").style.color = "#25A5F7";
+                document.getElementById("destination_button").style.backgroundColor = "#ffffff";
             }
         }
     }
 </script>
+
+<div class="uk-card">
+    <input type="file" id="uploadFileInput">
+    <button id="uploadFileButton">提交</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;
+    <button id="get_addr">补全订单的经纬度信息</button>
+</div>
 </body>
 </html>
