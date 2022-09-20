@@ -57,8 +57,8 @@ def get_addr_detail(abbreviated_address):
 
 @data_access_router.get("/get_lng_lat", name="获取数据的经纬度", description="获取数据的经纬度")
 def get_lng_lat():
-    # data = OriginData.objects(Q(origin_detail__exists=False) | Q(destination_detail__exists=False)).all()
-    data = OriginData.objects(order_time__gte="2022-09-01").all()
+    data = OriginData.objects(Q(origin_detail__exists=False) | Q(destination_detail__exists=False)).all()
+    # data = OriginData.objects(order_time__gte="2022-09-01").all()
     for idx, each_order in enumerate(tqdm(data, desc="补全地址")):
         # 判断源地址是否已经解析
         if each_order.origin_detail is None:
@@ -152,3 +152,12 @@ async def upload_data(file: UploadFile):  # fixme: 版本原因，该版本pydan
 
     # return RedirectResponse("/index", status_code=303)
     return Response(info="数据上传成功")
+
+
+@data_access_router.get("/delete_data", name="删除数据", description="删除未补全地址的数据")
+def delete_data():
+    query_result = OriginData.objects(Q(origin_detail__exists=False)
+                                      | Q(destination_detail__exists=False)).all()
+    for each_order in query_result:
+        each_order.delete()
+    return Response()
