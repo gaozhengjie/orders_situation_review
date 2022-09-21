@@ -55,7 +55,7 @@
         <span>确认费用</span>
         <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
 
-        <input type="submit" value="检索">
+        <input type="submit" value="检索" id="submit_query_condition">
 <!--                <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>-->
     </form>
 
@@ -113,6 +113,10 @@
                 }
             })
         })
+    });
+
+    $("#submit_query_condition").on("click", function () {
+
     });
 
 </script>
@@ -225,32 +229,6 @@
     // 绑定事件
     map.on('click', clickHandler);
 
-    var citys_origin = {{ citys_origin | safe }};
-    var mass = new AMap.MassMarks(citys_origin, {
-        opacity: 0.8,
-        zIndex: 111,
-        cursor: 'pointer',
-        style: {
-            url: 'https://webapi.amap.com/images/mass/mass0.png',
-            anchor: new AMap.Pixel(6, 6),
-            size: new AMap.Size(11, 11)
-        }
-    });
-
-    var citys_destination = {{ citys_destination | safe }};
-    var destinationMass = new AMap.MassMarks(citys_destination, {
-        opacity: 0.8,
-        zIndex: 111,
-        cursor: 'pointer',
-        style: {
-            url: 'http://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
-            anchor: new AMap.Pixel(4, 4),  // 图标显示位置偏移量，基准点为图标左上角
-            size: new AMap.Size(11, 11)
-        }
-    });
-
-    var marker = new AMap.Marker({content: ' ', map: map});
-
     // mass.on('mouseover', function (e) {
     //     marker.setPosition(e.data.lnglat);
     //     marker.setLabel({content: e.data.name});
@@ -326,6 +304,34 @@
                 document.getElementById("destination_button").style.backgroundColor = "#ffffff";
             }
         }
+    }
+
+    function drawMarkers() {   // 在图上重新绘制点，不需要重新加载整个页面
+        var citys_origin = {{ citys_origin | safe }};
+        var mass = new AMap.MassMarks(citys_origin, {
+            opacity: 0.8,
+            zIndex: 111,
+            cursor: 'pointer',
+            style: {
+                url: 'https://webapi.amap.com/images/mass/mass0.png',
+                anchor: new AMap.Pixel(6, 6),
+                size: new AMap.Size(11, 11)
+            }
+        });
+
+        var citys_destination = {{ citys_destination | safe }};
+        var destinationMass = new AMap.MassMarks(citys_destination, {
+            opacity: 0.8,
+            zIndex: 111,
+            cursor: 'pointer',
+            style: {
+                url: 'http://a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-default.png',
+                anchor: new AMap.Pixel(4, 4),  // 图标显示位置偏移量，基准点为图标左上角
+                size: new AMap.Size(11, 11)
+            }
+        });
+
+        var marker = new AMap.Marker({content: ' ', map: map});
     }
 </script>
 
