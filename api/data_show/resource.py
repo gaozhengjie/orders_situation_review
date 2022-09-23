@@ -112,12 +112,10 @@ def order_situation_review(request: Request, start_time: str = Form(title="开�
                                  "order_type": each_order.order_type,
                                  "order_way": each_order.order_way,
                                  "service_type": each_order.service_type})
-    return templates.TemplateResponse("data_show.html",
-                                      {"request": request,
-                                       "citys_origin": origin_data,
-                                       "citys_destination": destination_data,
-                                       "start_time": start_time,
-                                       "end_time": end_time})
+    return {"citys_origin": origin_data,
+            "citys_destination": destination_data,
+            "start_time": start_time,
+            "end_time": end_time}
 
 
 @data_show_router.get("/origin_data_show/", name="订单数据列表展示", description="订单数据列表展示")
@@ -129,5 +127,3 @@ def origin_data_show(request: Request, count: int = 10, pagination: int = 1):
                                                                 "order_list": data,
                                                                 "count": data_count,
                                                                 "pagination": pagination})
-
-

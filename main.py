@@ -32,9 +32,12 @@ app.add_middleware(
 )
 
 mongodb_info = {
+    # 'host': '117.50.186.28',
     'host': '127.0.0.1',
     'port': 27017,
-    'db': 'orders_situation_review'
+    'db': 'orders_situation_review',
+    # 'password': 'er2cNEDEG45MyWA',
+    # 'username': 'mongoadmin'
 }
 
 

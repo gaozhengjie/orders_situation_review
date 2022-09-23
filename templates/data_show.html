@@ -33,43 +33,29 @@
 </head>
 <body>
 <div>
-    <form action="/order_situation_review" method="post">
-        <label for="start_time">开始时间：</label><input id="start_time" name="start_time" type="datetime"
-                                                    value="{{start_time }}"/>
-        <label for="end_time">结束时间：</label><input id="end_time" name="end_time" type="datetime" value="{{end_time}}"/>
-
-        <span>主渠道</span>
-        <input type="checkbox" value="主渠道" name="channel_name_1" checked="checked">
-        <span>微信小程序</span>
-        <input type="checkbox" value="微信小程序" name="channel_name_2" checked="checked">
-        <span>司机端</span>
-        <input type="checkbox" value="司机端" name="channel_name_3" checked="checked">
-        <span>线上叫单</span>
-        <input type="checkbox" value="线上叫单" name="order_way_1" checked="checked">
-        <span>报单</span>
-        <input type="checkbox" value="报单" name="order_way_2" checked="checked">
-        <span>付款完成</span>
-        <input type="checkbox" value="付款完成" name="order_status_1" checked="checked">
-        <span>订单取消</span>
-        <input type="checkbox" value="订单取消" name="order_status_2" checked="checked">
-        <span>确认费用</span>
-        <input type="checkbox" value="确认费用" name="order_status_3" checked="checked">
-
-        <input type="submit" value="检索" id="submit_query_condition">
-<!--                <a href="#upload-data-div" uk-toggle class="btn">上传文件</a>-->
-    </form>
-
-    <!--    <form action="/upload_data" method="post" enctype="multipart/form-data">-->
-    <!--        <div class="uk-margin" uk-margin>-->
-    <!--            <div uk-form-custom="target: true">-->
-    <!--                <input type="file" name="file">-->
-    <!--                <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled>-->
-    <!--            </div>-->
-    <!--            <button class="uk-button uk-button-default">Submit</button>-->
-    <!--        </div>-->
-    <!--    </form>-->
-
-
+    <label for="start_time">开始时间：</label><input id="start_time" name="start_time" type="datetime"
+                                                value="{{start_time}}"/>
+    <label for="end_time">结束时间：</label><input id="end_time" name="end_time" type="datetime" value="{{end_time}}"/>
+    <span>主渠道</span>
+    <input type="checkbox" value="主渠道" id="channel_name_1" checked="checked">
+    <span>微信小程序</span>
+    <input type="checkbox" value="微信小程序" id="channel_name_2" checked="checked">
+    <span>司机端</span>
+    <input type="checkbox" value="司机端" id="channel_name_3" checked="checked">
+    <span>线上叫单</span>
+    <input type="checkbox" value="线上叫单" id="order_way_1" checked="checked">
+    <span>报单</span>
+    <input type="checkbox" value="报单" id="order_way_2" checked="checked">
+    <span>付款完成</span>
+    <input type="checkbox" value="付款完成" id="order_status_1" checked="checked">
+    <span>订单取消</span>
+    <input type="checkbox" value="订单取消" id="order_status_2" checked="checked">
+    <span>确认费用</span>
+    <input type="checkbox" value="确认费用" id="order_status_3" checked="checked">
+    <input type="button" value="检索" id="submit_query_condition">
+</div>
+<div id="loading_img" hidden>
+    <img src="/static/img/loading.gif">
 </div>
 
 <script type="text/javascript">
@@ -116,84 +102,37 @@
     });
 
     $("#submit_query_condition").on("click", function () {
-
+        $("#loading_img").attr("hidden", false);
+        var query_data = {
+            "start_time": $("#start_time").val(),
+            "end_time": $("#end_time").val(),
+            "channel_name_1": $("#channel_name_1").val(),
+            "channel_name_2": $("#channel_name_2").val(),
+            "channel_name_3": $("#channel_name_3").val(),
+            "order_way_1": $("#order_way_1").val(),
+            "order_way_2": $("#order_way_2").val(),
+            "order_status_1": $("#order_status_1").val(),
+            "order_status_2": $("#order_status_2").val(),
+            "order_status_3": $("#order_status_3").val()
+        };
+        $.ajax({
+            type: "post",  // 使用post方法上传文件
+            url: "/order_situation_review",  // 后台请求地址
+            data: query_data,  // 请求数据
+            success: function (data) {
+                var citys_origin = data.citys_origin;
+                var citys_destination = data.citys_destination;
+                drawMarkers(citys_origin, citys_destination);
+                $("#loading_img").attr("hidden", true);
+            },
+            error: function () {
+                alert("error");
+                $("#loading_img").attr("hidden", true);
+            }
+        })
     });
 
 </script>
-
-<!--<div id="upload-data-div" uk-modal>-->
-<!--    <div class="uk-modal-dialog uk-modal-body">-->
-<!--        <div class="js-upload uk-placeholder uk-text-center" >-->
-<!--            <form action="/upload_data" method="post" enctype="multipart/form-data">-->
-<!--                <span uk-icon="icon: cloud-upload"></span>-->
-<!--                <span class="uk-text-middle">拖拽文件到这里或者</span>-->
-<!--                <div uk-form-custom>-->
-<!--                    <input type="file" name="file">-->
-<!--                    <span class="uk-link">选择文件</span>-->
-<!--                </div>-->
-<!--                <input type="submit" value="提交" class="btn">-->
-<!--            </form>-->
-<!--            <progress id="js-progressbar" class="uk-progress" value="0" max="100" hidden></progress>-->
-
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-
-<!--<script>-->
-<!--    var bar = document.getElementById('js-progressbar');-->
-<!--    UIkit.upload('.js-upload', {-->
-<!--        url: '',-->
-<!--        multiple: true,-->
-
-<!--        beforeSend: function () {-->
-<!--            console.log('beforeSend', arguments);-->
-<!--        },-->
-<!--        beforeAll: function () {-->
-<!--            console.log('beforeAll', arguments);-->
-<!--        },-->
-<!--        load: function () {-->
-<!--            console.log('load', arguments);-->
-<!--        },-->
-<!--        error: function () {-->
-<!--            console.log('error', arguments);-->
-<!--        },-->
-<!--        complete: function () {-->
-<!--            console.log('complete', arguments);-->
-<!--        },-->
-
-<!--        loadStart: function (e) {-->
-<!--            console.log('loadStart', arguments);-->
-
-<!--            bar.removeAttribute('hidden');-->
-<!--            bar.max = e.total;-->
-<!--            bar.value = e.loaded;-->
-<!--        },-->
-
-<!--        progress: function (e) {-->
-<!--            console.log('progress', arguments);-->
-
-<!--            bar.max = e.total;-->
-<!--            bar.value = e.loaded;-->
-<!--        },-->
-
-<!--        loadEnd: function (e) {-->
-<!--            console.log('loadEnd', arguments);-->
-
-<!--            bar.max = e.total;-->
-<!--            bar.value = e.loaded;-->
-<!--        },-->
-
-<!--        completeAll: function () {-->
-<!--            console.log('completeAll', arguments);-->
-<!--            setTimeout(function () {-->
-<!--                bar.setAttribute('hidden', 'hidden');-->
-<!--            }, 1000);-->
-
-<!--            console.log('Upload Completed');-->
-<!--        }-->
-<!--    });-->
-<!--</script>-->
 
 <div id="container" class="map" tabindex="0"></div>
 
@@ -229,56 +168,10 @@
     // 绑定事件
     map.on('click', clickHandler);
 
-    // mass.on('mouseover', function (e) {
-    //     marker.setPosition(e.data.lnglat);
-    //     marker.setLabel({content: e.data.name});
-    // });
-
-    mass.on("click", function (e) {
-        //构建信息窗体中显示的内容
-        var info = [];
-        info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>订单详情</b>");
-        info.push("订单编号：" + e.data.utility_type_order_number);
-        info.push("渠道名称：" + e.data.channel_name);
-        info.push("出发地：" + e.data.origin);
-        info.push("目的地：" + e.data.destination);
-        info.push("订单状态：" + e.data.order_status);
-        info.push("下单时间：" + e.data.order_time);
-        info.push("订单类型：" + e.data.order_type);
-        info.push("下单类型：" + e.data.order_way);
-        info.push("服务类型：" + e.data.service_type);
-        infoWindow = new AMap.InfoWindow({
-            content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
-        });
-        infoWindow.open(map, e.data.lnglat);
-    });
-
-    destinationMass.on("click", function (e) {
-        var info = [];
-        info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>订单详情</b>");
-        info.push("订单编号：" + e.data.utility_type_order_number);
-        info.push("渠道名称：" + e.data.channel_name);
-        info.push("出发地：" + e.data.origin);
-        info.push("目的地：" + e.data.destination);
-        info.push("订单状态：" + e.data.order_status);
-        info.push("下单时间：" + e.data.order_time);
-        info.push("订单类型：" + e.data.order_type);
-        info.push("下单类型：" + e.data.order_way);
-        info.push("服务类型：" + e.data.service_type);
-        infoWindow = new AMap.InfoWindow({
-            content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
-        });
-        infoWindow.open(map, e.data.lnglat);
-    });
-
-    destinationMass.setMap(map);  // 先添加终点图层，再添加起点图层，起点覆盖在终点之上，因为用户更关注起点
-    mass.setMap(map);
-
     var massStatus = 1;
     var destinationMassStatus = 1;
 
     function changeDisplayStatus(massType) {
-        // mass.setStyle(style[styleType]);
         if (massType == 0) {
             if (massStatus == 0) {
                 mass.show();
@@ -306,8 +199,7 @@
         }
     }
 
-    function drawMarkers() {   // 在图上重新绘制点，不需要重新加载整个页面
-        var citys_origin = {{ citys_origin | safe }};
+    function drawMarkers(citys_origin, citys_destination) {   // 在图上重新绘制点，不需要重新加载整个页面
         var mass = new AMap.MassMarks(citys_origin, {
             opacity: 0.8,
             zIndex: 111,
@@ -319,7 +211,6 @@
             }
         });
 
-        var citys_destination = {{ citys_destination | safe }};
         var destinationMass = new AMap.MassMarks(citys_destination, {
             opacity: 0.8,
             zIndex: 111,
@@ -332,6 +223,46 @@
         });
 
         var marker = new AMap.Marker({content: ' ', map: map});
+
+        mass.on("click", function (e) {
+            //构建信息窗体中显示的内容
+            var info = [];
+            info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>订单详情</b>");
+            info.push("订单编号：" + e.data.utility_type_order_number);
+            info.push("渠道名称：" + e.data.channel_name);
+            info.push("出发地：" + e.data.origin);
+            info.push("目的地：" + e.data.destination);
+            info.push("订单状态：" + e.data.order_status);
+            info.push("下单时间：" + e.data.order_time);
+            info.push("订单类型：" + e.data.order_type);
+            info.push("下单类型：" + e.data.order_way);
+            info.push("服务类型：" + e.data.service_type);
+            infoWindow = new AMap.InfoWindow({
+                content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+            });
+            infoWindow.open(map, e.data.lnglat);
+        });
+
+        destinationMass.on("click", function (e) {
+            var info = [];
+            info.push("<div style=\"padding:0px 0px 0px 4px;\"><b>订单详情</b>");
+            info.push("订单编号：" + e.data.utility_type_order_number);
+            info.push("渠道名称：" + e.data.channel_name);
+            info.push("出发地：" + e.data.origin);
+            info.push("目的地：" + e.data.destination);
+            info.push("订单状态：" + e.data.order_status);
+            info.push("下单时间：" + e.data.order_time);
+            info.push("订单类型：" + e.data.order_type);
+            info.push("下单类型：" + e.data.order_way);
+            info.push("服务类型：" + e.data.service_type);
+            infoWindow = new AMap.InfoWindow({
+                content: info.join("<br/>")  //使用默认信息窗体框样式，显示信息内容
+            });
+            infoWindow.open(map, e.data.lnglat);
+        });
+
+        destinationMass.setMap(map);  // 先添加终点图层，再添加起点图层，起点覆盖在终点之上，因为用户更关注起点
+        mass.setMap(map);
     }
 </script>
 
